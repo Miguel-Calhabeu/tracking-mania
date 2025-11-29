@@ -6,7 +6,7 @@ export type CapturedRequest = {
     method: string;
     url: string;
     type: 'fetch' | 'xhr' | 'beacon' | 'image' | 'log' | 'custom';
-    body?: any;
+    body?: unknown;
     headers?: Record<string, string>;
 };
 
@@ -22,10 +22,26 @@ interface StoreState {
     setGtmStatus: (status: 'idle' | 'loading' | 'active' | 'error') => void;
 }
 
+const serializeBody = (body: unknown) => {
+    if (body === undefined || body === null) return '';
+    try {
+        return JSON.stringify(body);
+    } catch (e) {
+        return String(body);
+    }
+};
+
 export const useStore = create<StoreState>((set) => ({
     capturedRequests: [],
     addRequest: (req) => set((state) => {
-        if (state.capturedRequests.some(r => r.id === req.id)) {
+        const duplicate = state.capturedRequests.some((r) => {
+            if (r.type !== req.type || r.method !== req.method || r.url !== req.url) return false;
+            const bodyMatches = serializeBody(r.body) === serializeBody(req.body);
+            const isRecent = Math.abs(req.timestamp - r.timestamp) < 1000;
+            return bodyMatches && isRecent;
+        });
+
+        if (duplicate) {
             return state;
         }
         return { capturedRequests: [req, ...state.capturedRequests] };

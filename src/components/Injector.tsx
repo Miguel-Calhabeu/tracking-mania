@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useStore } from '@/store/useStore';
 
 export default function Injector() {
@@ -15,24 +15,11 @@ export default function Injector() {
     const gtmStatus = useStore((state) => state.gtmStatus);
     const setGtmStatus = useStore((state) => state.setGtmStatus);
 
-    useEffect(() => {
-        const savedId = localStorage.getItem("gtm_id");
-        if (savedId) {
-            const sanitizedId = savedId.trim().toUpperCase();
-            setLocalGtmId(sanitizedId);
-            setGlobalGtmId(sanitizedId);
+    const normalizeGtmId = (id: string) => id.trim().toUpperCase();
+    const isValidGtmId = (id: string) => normalizeGtmId(id).startsWith('GTM-');
 
-            // Only inject in main window if NOT a custom challenge AND type is determined
-            if (!document.getElementById("gtm-script") && activeChallengeType !== 'custom' && activeChallengeType !== null) {
-                injectGTM(sanitizedId);
-            }
-            setIsLoaded(true);
-            setIsCollapsed(true); // Auto-collapse on load
-        }
-    }, [setGlobalGtmId, activeChallengeType]);
-
-    const injectGTM = (id: string) => {
-        const trimmedId = id.trim().toUpperCase();
+    const injectGTM = useCallback((id: string) => {
+        const trimmedId = normalizeGtmId(id);
 
         // Double check to prevent manual injection in custom mode
         if (activeChallengeType === 'custom') {
@@ -88,17 +75,38 @@ export default function Injector() {
 
         localStorage.setItem("gtm_id", trimmedId);
         setGlobalGtmId(trimmedId);
-    };
+    }, [activeChallengeType, setGlobalGtmId, setGtmStatus]);
+
+    useEffect(() => {
+        const savedId = localStorage.getItem("gtm_id");
+        if (savedId && isValidGtmId(savedId)) {
+            const sanitizedId = normalizeGtmId(savedId);
+            setLocalGtmId(sanitizedId);
+            setGlobalGtmId(sanitizedId);
+
+            // Only inject in main window if NOT a custom challenge AND type is determined
+            if (!document.getElementById("gtm-script") && activeChallengeType !== 'custom' && activeChallengeType !== null) {
+                injectGTM(sanitizedId);
+            }
+            setIsLoaded(true);
+            setIsCollapsed(true); // Auto-collapse on load
+        } else if (!savedId) {
+            setGtmStatus('idle');
+        } else {
+            localStorage.removeItem('gtm_id');
+            setGtmStatus('idle');
+        }
+    }, [activeChallengeType, injectGTM, setGlobalGtmId, setGtmStatus]);
 
     const handleInject = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!localGtmId.trim().toUpperCase().startsWith('GTM-')) {
+        if (!isValidGtmId(localGtmId)) {
             alert('ID do GTM inválido. Deve começar com GTM-');
             return;
         }
 
-        const sanitizedId = localGtmId.trim().toUpperCase();
+        const sanitizedId = normalizeGtmId(localGtmId);
         const savedId = localStorage.getItem("gtm_id");
 
         // If the ID is exactly the same, do nothing (prevents loading status issue)
@@ -114,17 +122,13 @@ export default function Injector() {
             return;
         }
 
-        // Initial injection - defer to next tick to match localStorage timing
-        // This ensures the component is fully stable before injecting
-        setTimeout(() => {
-            injectGTM(localGtmId);
-            setIsLoaded(true);
-            setIsCollapsed(true);
-        }, 0);
+        injectGTM(sanitizedId);
+        setIsLoaded(true);
+        setIsCollapsed(true);
     };
 
     const confirmUpdate = () => {
-        localStorage.setItem("gtm_id", localGtmId.trim().toUpperCase());
+        localStorage.setItem("gtm_id", normalizeGtmId(localGtmId));
         window.location.reload();
     };
 
