@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: var(--font-display);
+
+  --color-primary: #4F46E5;
+  --color-primary-light: #6366F1;
+  --color-primary-dark: #4338CA;
+
+  --color-background-light: #F3F4F6;
+  --color-background-dark: #0B0E1A;
+
+  --color-surface-light: #FFFFFF;
+  --color-surface-dark: #161A2C;
+
+  --color-muted-light: #6B7280;
+  --color-muted-dark: #9CA3AF;
+
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+
+  --shadow-glow-violet: 0 0 15px 5px rgba(139, 92, 246, 0.2);
+}

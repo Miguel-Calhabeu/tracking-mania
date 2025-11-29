@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tracking Challenges Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: "#4F46E5", // indigo-600
+              light: "#6366F1", // indigo-500
+              dark: "#4338CA"  // indigo-700
+            },
+            "background-light": "#F3F4F6", // gray-100
+            "background-dark": "#0B0E1A",
+            "surface-light": "#FFFFFF",
+            "surface-dark": "#161A2C",
+            "muted-light": "#6B7280", // gray-500
+            "muted-dark": "#9CA3AF"  // gray-400
+          },
+          fontFamily: {
+            display: ["Space Grotesk", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.75rem", // 12px
+            lg: "1rem", // 16px
+            xl: "1.25rem", // 20px
+          },
+          boxShadow: {
+            'glow-violet': '0 0 15px 5px rgba(139, 92, 246, 0.2)',
+          }
+        },
+      },
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+    .bg-grid {
+        background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+    .dark .bg-grid-light {
+        background-image: none;
+    }
+    .light .bg-grid-dark {
+        background-image: none;
+    }
+  </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 antialiased">
+<div class="min-h-screen">
+<header class="relative overflow-hidden">
+<div class="absolute inset-0 bg-grid bg-grid-dark dark:bg-grid-light"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-background-dark"></div>
+<div class="relative container mx-auto px-6 py-20 lg:py-24">
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-gray-100">
+          TRACKING <span class="bg-gradient-to-r from-violet-400 to-purple-500 text-transparent bg-clip-text">MANIA</span>
+</h1>
+<p class="mt-4 max-w-3xl mx-auto text-center text-lg text-muted-dark">
+          Master the art of web analytics. Solve real-world tagging challenges in simulated environments. From basic clicks to complex single-page application events.
+        </p>
+</div>
+</header>
+<main class="container mx-auto px-6 pb-24">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">Available Challenges</h2>
+<div class="flex items-center gap-2 text-sm">
+<button class="px-4 py-2 rounded-full bg-primary-light text-white font-medium transition-colors">All</button>
+<button class="px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-medium">Template-based</button>
+<button class="px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-medium">Custom</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl flex flex-col border border-gray-200 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary-dark/10 dark:hover:shadow-glow-violet hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-semibold py-1 px-3 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">Template-based</span>
+<span class="text-xs font-semibold py-1 px-3 rounded-full bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Beginner</span>
+</div>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Global Travel Booker</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm flex-grow">Set up basic page view and button click tracking across multiple booking steps.</p>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl flex flex-col border border-gray-200 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary-dark/10 dark:hover:shadow-glow-violet hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-semibold py-1 px-3 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300">Custom</span>
+<span class="text-xs font-semibold py-1 px-3 rounded-full bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300">Medium</span>
+</div>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Cyberpunk Gadget Store</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm flex-grow mb-4">Implement advanced e-commerce tracking on a dynamic, single-page application.</p>
+<div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700/50">
+<a class="flex items-center gap-2 text-sm font-medium text-primary-light dark:text-indigo-400 hover:underline" href="#">
+<span class="material-symbols-outlined text-base">code</span>
+              View Source
+            </a>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-xl flex flex-col border border-gray-200 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary-dark/10 dark:hover:shadow-glow-violet hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<span class="text-xs font-semibold py-1 px-3 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300">Custom</span>
+<span class="text-xs font-semibold py-1 px-3 rounded-full bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">Advanced</span>
+</div>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Data Analytics Platform</h3>
+<p class="text-muted-light dark:text-muted-dark text-sm flex-grow mb-4">Track user engagement and subscription flows within a complex B2B SaaS platform.</p>
+<div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700/50">
+<a class="flex items-center gap-2 text-sm font-medium text-primary-light dark:text-indigo-400 hover:underline" href="#">
+<span class="material-symbols-outlined text-base">code</span>
+              View Source
+            </a>
+</div>
+</div>
+<div class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl flex flex-col items-center justify-center p-6 text-center text-muted-light dark:text-muted-dark">
+<div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-2xl">add</span>
+</div>
+<h3 class="font-bold text-gray-700 dark:text-gray-300 mb-1">Coming Soon</h3>
+<p class="text-sm">More scenarios are under development.</p>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>
