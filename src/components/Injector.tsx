@@ -3,6 +3,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useStore } from '@/store/useStore';
 
+type DataLayer = Array<Record<string, unknown>> & {
+    push: (...items: Record<string, unknown>[]) => number;
+};
+
+type GtmWindow = Window & {
+    dataLayer?: DataLayer;
+    google_tag_manager?: unknown;
+};
+
 export default function Injector() {
     const [localGtmId, setLocalGtmId] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
@@ -18,8 +27,32 @@ export default function Injector() {
     const normalizeGtmId = (id: string) => id.trim().toUpperCase();
     const isValidGtmId = (id: string) => normalizeGtmId(id).startsWith('GTM-');
 
+    const clearGtmEnvironment = useCallback(() => {
+        const gtmWindow = window as GtmWindow;
+        const existingScript = document.getElementById("gtm-script");
+        const existingNoScript = document.getElementById("gtm-noscript");
+        if (existingScript) existingScript.remove();
+        if (existingNoScript) existingNoScript.remove();
+
+        if (gtmWindow.google_tag_manager) {
+            delete gtmWindow.google_tag_manager;
+        }
+
+        if (gtmWindow.dataLayer) {
+            try {
+                gtmWindow.dataLayer.length = 0;
+            } catch (error) {
+                console.warn('Failed to reset dataLayer', error);
+            }
+            delete gtmWindow.dataLayer;
+        }
+    }, []);
+
     const injectGTM = useCallback((id: string) => {
         const trimmedId = normalizeGtmId(id);
+        const gtmWindow = window as GtmWindow;
+
+        clearGtmEnvironment();
 
         // Double check to prevent manual injection in custom mode
         if (activeChallengeType === 'custom') {
@@ -33,17 +66,11 @@ export default function Injector() {
 
         if (!trimmedId.startsWith("GTM-")) return;
 
-        // Remove existing GTM scripts if any
-        const existingScript = document.getElementById("gtm-script");
-        const existingNoScript = document.getElementById("gtm-noscript");
-        if (existingScript) existingScript.remove();
-        if (existingNoScript) existingNoScript.remove();
-
         // Ensure dataLayer exists
-        window.dataLayer = window.dataLayer || [];
+        gtmWindow.dataLayer = gtmWindow.dataLayer || [];
 
         // Push start event
-        window.dataLayer.push({
+        gtmWindow.dataLayer.push({
             'gtm.start': new Date().getTime(),
             event: 'gtm.js'
         });
@@ -75,7 +102,7 @@ export default function Injector() {
 
         localStorage.setItem("gtm_id", trimmedId);
         setGlobalGtmId(trimmedId);
-    }, [activeChallengeType, setGlobalGtmId, setGtmStatus]);
+    }, [activeChallengeType, clearGtmEnvironment, setGlobalGtmId, setGtmStatus]);
 
     useEffect(() => {
         const savedId = localStorage.getItem("gtm_id");
@@ -109,12 +136,6 @@ export default function Injector() {
         const sanitizedId = normalizeGtmId(localGtmId);
         const savedId = localStorage.getItem("gtm_id");
 
-        // If the ID is exactly the same, do nothing (prevents loading status issue)
-        if (savedId === sanitizedId) {
-            setIsCollapsed(true);
-            return;
-        }
-
         // If ID has changed and we already have one loaded, ask for confirmation to reload
         // Exception: Custom challenges can update dynamically without reload
         if (savedId && savedId !== sanitizedId && activeChallengeType !== 'custom') {
@@ -128,16 +149,15 @@ export default function Injector() {
     };
 
     const confirmUpdate = () => {
-        localStorage.setItem("gtm_id", normalizeGtmId(localGtmId));
-        window.location.reload();
+        const sanitizedId = normalizeGtmId(localGtmId);
+        setShowUpdateConfirm(false);
+        injectGTM(sanitizedId);
+        setIsLoaded(true);
+        setIsCollapsed(true);
     };
 
     const handleReset = () => {
-        // Remove scripts
-        const existingScript = document.getElementById("gtm-script");
-        const existingNoScript = document.getElementById("gtm-noscript");
-        if (existingScript) existingScript.remove();
-        if (existingNoScript) existingNoScript.remove();
+        clearGtmEnvironment();
 
         // Clear storage and state
         localStorage.removeItem("gtm_id");
