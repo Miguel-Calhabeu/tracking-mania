@@ -157,22 +157,23 @@ function getMethodColor(method: string) {
 function getEventName(req: CapturedRequest): string | null {
     // Handle Custom Logs/Events
     if (req.type === 'log' || req.type === 'custom') {
-        if (req.body?.type === 'log') {
-            return `Console: ${req.body.args?.[0]}`;
+        const body = req.body as any;
+        if (body?.type === 'log') {
+            return `Console: ${body.args?.[0]}`;
         }
-        if (req.body?.type === 'click') {
-            return `Click: ${req.body.target}#${req.body.id}`;
+        if (body?.type === 'click') {
+            return `Click: ${body.target}#${body.id}`;
         }
-        if (req.body?.type === 'error') {
-            return `Error: ${req.body.message}`;
+        if (body?.type === 'error') {
+            return `Error: ${body.message}`;
         }
-        return `Custom: ${req.body?.type}`;
+        return `Custom: ${body?.type}`;
     }
 
     // Try to parse GA4/GTM event name from body or URL
     try {
         if (req.body) {
-            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body as any;
             // GA4 often sends 'en' (event name) parameter
             if (req.url.includes('google-analytics.com')) {
                 // Check for 'en' in query params first
